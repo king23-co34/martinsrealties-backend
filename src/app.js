@@ -22,6 +22,11 @@ const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
+// Render (and most PaaS hosts) sit behind a reverse proxy, so Express needs
+// to trust the X-Forwarded-For header it sets. Without this, express-rate-limit
+// throws on every request because it can't safely identify the real client IP.
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(helmet());
 
