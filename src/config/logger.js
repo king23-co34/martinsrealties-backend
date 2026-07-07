@@ -33,12 +33,15 @@ const logger = winston.createLogger({
   exitOnError: false,
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(
-    new winston.transports.Console({
-      format: combine(colorize(), timestamp(), logFormat),
-    })
-  );
-}
+// Always log to console as well as to file. Platforms like Render capture
+// stdout/stderr for their log viewer, but the on-disk log files above live
+// on ephemeral storage that isn't visible there — without this, production
+// logs (e.g. admin auto-seed status, login attempts) were effectively
+// invisible on Render.
+logger.add(
+  new winston.transports.Console({
+    format: combine(colorize(), timestamp(), logFormat),
+  })
+);
 
 module.exports = logger;
